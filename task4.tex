@@ -1,3 +1,4 @@
+\section*{Task 4: Buffer overflows}
 In the fourth task we were required to carry out an attack against another machine in the pen test lab. [Metasploit was used. Metasploit was read about at <website>]
 \begin{enumerate}
 \item % 4 (a)
@@ -16,10 +17,10 @@ The first line selects the scanner module, the second line sets the target to be
 [Output]
 The output shows that the version of the Samba service running is 2.2.1a.
 
-The next step is to search for a vulnerability and an exploit for that version of Samba. We made use of The Exploit Database (see \url{http://www.exploit-db.com}) for this. Specifically, a free-text search of ``samba 2.2.1a'' gave one hit, namely, \exploit{Samba trans2open Overflow for Linux x86}. Searching for trans2open in the Metasploit console then revealed the name of an exploit module for that very exploit: \msexploit{exploit/linux/samba/trans2open}.
+The next step is to search for a vulnerability and an exploit for that version of Samba. We made use of The Exploit Database (see \url{http://www.exploit-db.com}) for this. Specifically, a free-text search of ``samba 2.2.1a'' gave one hit, namely, \exploitname{Samba trans2open Overflow (Linux x86)}. Searching for trans2open in the Metasploit console then revealed the name of an exploit module for that very exploit: \msexploit{exploit/linux/samba/trans2open}.
 
 The following step was to carry out the attack using the exploit in Metasploit. It was done by issuing the following commands:
-\begin{enumerate}
+\begin{enumerate}[1.]
 \item \lstinline{use exploit/linux/samba/trans2open}
 \item \lstinline{show options}
 \item \lstinline{set RHOST 192.168.2.133}
@@ -27,7 +28,7 @@ The following step was to carry out the attack using the exploit in Metasploit. 
 \item \lstinline{set payload linux/x86/shell_bind_tcp}
 \item \lstinline{exploit}
 \end{enumerate}
-The first line selects the exploit module for the \exploit{trans2open} exploit, the second shows the options for the module. The only required option that was empty was \option{RHOST}, which specifies the target address. The third line sets said option to \ip{192.168.2.133}---the address of the target machine. The fourth line then shows the payloads available for the exploit, and the fifth line selects a payload called \payloadname{Bind TCP Inline} [explain what the payload does]. Finally, the last line executes the attack.
+The first line selects the exploit module for the \exploitname{trans2open} exploit, the second shows the options for the module. The only required option for the exploit that was empty was \option{RHOST}, which specifies the target address. The third line sets said option to \ipaddress{192.168.2.133}---the address of the target machine. The fourth line then shows the payloads available for the exploit, and the fifth line selects a payload called \payloadname{Bind TCP Inline} [explain what the payload does]. Finally, the last line executes the attack.
 
 Upon execution, the following is printed in the console.
 [Output of the attack]
