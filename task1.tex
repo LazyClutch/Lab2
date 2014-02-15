@@ -2,16 +2,17 @@
 \begin{enumerate}
 \item % 1 (a)
   The fundamental security properties that IPsec offers are integrity and confidentiality.
-
+   \par Intergrity guarantees that data will not be changed during transmission, which means that the receiver will receive exactly the same thing sent from sender. Authentication Headers (AH) and Encapsulating Security Payloads (ESP) are two protocols that provide integrity.
+   \par Confidentiality guarantees that only the receiver himself has the ability to disclose the data. To do this, data has to be encrypted before transmission, which can be done by using ESP. To decrypt, the receiver should have a shared key for calculating the checksum. 
   %TODO: Briefly explain how IPsec offers integrity and confidentiality
   \item \highergradesonly
   \item % 1 (c)
     \begin{enumerate}
     \item
-      BHash cannot be decoded trivially
-      BHash is still vulnerable to replay attacks
-      BHash is still vulnerable to dictionary attacks or attacks with lookup tables for reversing the hash
+      BHash, compared with Basic HTTP authentication, gains more security in that Basic HTTP authentication, username and password are encoded with base-64, which can be decoded by certain algorithm. Thus, it's not safe when attacker get the message. BHash, on the other hand, improve its security by hashing the username and password before base-64 encoding. Even the attacker get the message and decode it, he can't find any useful information.  
     \item
-      Digest HTTP uses nonces and is thus not vulnerable to replay attacks
+    As for BHash, it is vulnerable to replay attacks. As the attack hold the message, he can send it and pretend that he is the original sender. The receiver will trust the attacker because there is nothing else that can be done to check whether the message is sent from authentic sender.
+    Also, BHash is vulnerable to dictionary attacks or attacks with lookup tables for reversing the hash which means that there is possibility for the attacker to acquire the username and password.
+   \par Digest HTTP authentication, on the contrary, gains security in a more sophisticated and security way. Username, password and realm (a description of the computer or system being accessed) will firstly be hashed. The hashed data will then be hashed together with nouce and cnonce. Nonce is a single-use value every session with a timestamp to prevent replay attacks and chosen-plaintext attack. Thus, it's almost impossible for attacker to forge the message or decode it.
     \end{enumerate}
 \end{enumerate}
