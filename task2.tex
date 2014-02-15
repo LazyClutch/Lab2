@@ -6,19 +6,20 @@
   \item
     A bot is an application that allows for the automation of tasks usually carried out by humans. Legitimate examples of bots are web crawlers that collect information about the web and IRC (Internet Relay Chat) bots that manage chat servers\cite{cisco_difference}. More iniquitous bots, falling into the category of malware, may be designed to infect other hosts and report back to a command and control server. Through this server, a botmaster may instruct the network of infected hosts---the \textit{botnet}---to carry out horrendous deeds such as (distributed) denial of service attacks and sending spam\cite{cisco_botnets}.
   \item
-    A keylogger is used for logging the keystrokes on a keyboard. They can be implemented in either software or hardware. Keyloggers implemented in software may be designed to operate in the kernel, through which all the keystrokes are passed, and silently log the keystrokes to a local file. The file may then periodically be sent by e-mail for analysis by the attacker\cite{wikipedia_keylogger}. A common type of hardware keyloggers is placed between the I/O port on the computer and the keyboard cable and simply forwards the keystrokes to the computer while at the same time logging them to its internal memory. The information gathered by the keyloggers can be used for in several ways of varying legitimacy: gathering secret information like passwords, identity theft, intrusion detection, and parental monitoring\cite{sagirogly09}.
+    A keylogger is used for logging the keystrokes on a keyboard. They can be implemented in either software or hardware.
+
+Keyloggers implemented in software may be designed to operate in the kernel, through which all the keystrokes are passed, and silently log the keystrokes to a local file. The file may then periodically be sent by e-mail for analysis by the attacker\cite{wikipedia_keylogger}. It should be noted that software keyloggers often record more than just keystrokes. Mouse actions, clipboard operations, the title of the focused window, and screenshots are just some examples of information that is particularly valuable whencombined with keystroke data\cite{sagiroglu09}.
+
+A common type of hardware keyloggers is an adapter-like device placed between the I/O port on the computer and the keyboard cable, which simply forwards the keystrokes to the computer while at the same time logging them to its internal memory.
+
+The information gathered by the keyloggers can be used for in several ways of varying legitimacy: gathering secret information like passwords, identity theft, intrusion detection, and parental monitoring\cite{sagiroglu09}.
 
 Capturing electromagnetic emissions of a wired keyboard is a type of keylogging that is too interesting not to mention. Keylogging of that type has been shown to be possible to be carried out successfully on unmodified keyboards of various models at a distance of 20 meters\cite{vuagnoux10}.
   \item
     Spyware is malware that surreptitiously collects information about a user and his or her system. The information gathered may include but is not limited to usernames and passwords (either found stored on the computer or using keyloggers as mentioned earlier), e-mail addresses for spamming purposes, and bank account and credit card numbers.\cite{aycock06}
   \item A rootkit is a collection of tools that hides its presence or the presence of other software, typically malware, from detection. This is done by modifying system software that would otherwise be able to detect that which is being hidden. It should be noted that enabling administrator access for an attacker was originally a defining characteristic of a rootkit (hence the name \emph{root}kit) but that the importance of that characteristic has diminished.\cite{mcafee06}
   \end{itemize}
-
-  Rootkit combined with anything makes the malware hard to detect
+  A rootkit combined with mostly anything makes for a piece of malware that is difficult not only to detect but also to remove once detected. One could imagine that a rootkit combined with a software keylogger that only occasionally sends the logged keys from the infected system would be nigh impossible to detect and could end up running uninterrupted for the lifetime of that system.
 \item % 2 (b)
-  Suppose an attacker is combining a keylogger, spyware, and rootkit
-Intrusion detection system that monitors the network traffic can detect an attack in despite the rootkit
-Once the attack is detected, the malware will still be hard to remove
-One option is to boot a clean operating system (from a disc or USB stick) and have it removed from there
-  
+  If the rootkit hides the keylogger properly, there is little a system administrator can do to even detect the malware from the infected system. By running an intrusion detection system (IDS) on another machine, it might be possible to detect the occasional e-mail sent by the keylogger (assuming that that is how the keylogger transfers the recorded data) and identify it as caused by a keylogger. Removing the malware could still prove difficult or even practically impossible if the rootkit has infected the kernel. The simplest solution might be to reinstall the operating system.\cite{wikipedia_rootkit}  
 \end{enumerate}
