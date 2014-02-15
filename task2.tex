@@ -4,16 +4,15 @@
   \begin{itemize}
   \item A backdoor is a mechanism that allows a user to circumvent the authentication process of a system, a typical example of which is the presence of a predefined username that requires no password during authentication. While backdoors could be handy for legitimate administrative purposes, it should be clear that they are devastating in the hands of an attacker. It should be noted that backdoors need not be code snippets planted in an authentication process but rather could be standalone programs. Such a program, commonly referred to as a RAT (Remote Access Trojan) when used malevolently, could be installed by malware without the user's consent and give an attacker access to the system.\cite{aycock06}
   \item
+    A bot is an application that allows for the automation of tasks usually carried out by humans. Legitimate examples of bots are web crawlers that collect information about the web and IRC (Internet Relay Chat) bots that manage chat servers\cite{cisco_difference}. More iniquitous bots, falling into the category of malware, may be designed to infect other hosts and report back to a command and control server. Through this server, a botmaster may instruct the network of infected hosts---the \textit{botnet}---to carry out horrendous deeds such as (distributed) denial of service attacks and sending spam\cite{cisco_botnets}.
   \item
+    A keylogger is used for logging the keystrokes on a keyboard. They can be implemented in either software or hardware. Keyloggers implemented in software may be designed to operate in the kernel, through which all the keystrokes are passed, and silently log the keystrokes to a local file. The file may then periodically be sent by e-mail for analysis by the attacker\cite{wikipedia_keylogger}. A common type of hardware keyloggers is placed between the I/O port on the computer and the keyboard cable and simply forwards the keystrokes to the computer while at the same time logging them to its internal memory. The information gathered by the keyloggers can be used for in several ways of varying legitimacy: gathering secret information like passwords, identity theft, intrusion detection, and parental monitoring\cite{sagirogly09}.
+
+Capturing electromagnetic emissions of a wired keyboard is a type of keylogging that is too interesting not to mention. Keylogging of that type has been shown to be possible to be carried out successfully on unmodified keyboards of various models at a distance of 20 meters\cite{vuagnoux10}.
   \item
-    Spyware is malware that surreptitiously collects information about a user and his or her system. The information gathered may include but is not limited to usernames and passwords, e-mail addresses for spamming purposes, and bank account and credit card numbers.\cite{aycock06}
-  \item A rootkit is a piece of software that hides its presence or the presence of other software from detection. 
+    Spyware is malware that surreptitiously collects information about a user and his or her system. The information gathered may include but is not limited to usernames and passwords (either found stored on the computer or using keyloggers as mentioned earlier), e-mail addresses for spamming purposes, and bank account and credit card numbers.\cite{aycock06}
+  \item A rootkit is a collection of tools that hides its presence or the presence of other software, typically malware, from detection. This is done by modifying system software that would otherwise be able to detect that which is being hidden. It should be noted that enabling administrator access for an attacker was originally a defining characteristic of a rootkit (hence the name \emph{root}kit) but that the importance of that characteristic has diminished.\cite{mcafee06}
   \end{itemize}
-  Backdoor: Something that allows unauthorized users access to a system\\
-  Bot: Remotely controlled computer. Several bots form a botnet\\
-  Keylogger: Logs and sends (to attacker) key presses (and possibly related things like clipboard information). Keyloggers are an example of spyware\\
-  Spyware: Software that monitors system\\
-  Rootkit: Malware that modifies the victim's system in order to hide from detection\\
 
   Rootkit combined with anything makes the malware hard to detect
 \item % 2 (b)

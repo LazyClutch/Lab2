@@ -1,11 +1,11 @@
 \section*{Task 5: Access control}
 \begin{enumerate}
 \item % 5 (a)
-  ((Description of capabilities))\\
-  The server can encrypt the capability list of a user with its private key and then send it to the user as a cookie. When the user makes a request, the server will receive the cookie, decrypt it with its public key, and verify that the user is authorized to make the request. As SSH keys have the property of [something][add citation], only the server can create these encrypted capability lists; malevolent users cannot forge them directly.
+  Capabilities are one way of representing an access control matrix, which describes the protection state of a system. Each subject (user) of the system maintains a list of access rights to the objects (resources) of the system. Such a list is referred to as a capability. The concept of capabilities can be contrasted with that of access control lists, where a list of access rights for the subjects are maintained for each object. An important difference between capabilities and access control lists is that the user typically maintains his or her capability and presents it to the system during access control, whereas access control lists are handled entirely by the system. Capabilities must therefore be protected against forgery. One way of implementing such protection is through the use of cryptography.\cite{bishop02}
 
-((Mention that the cookie can be delegated. Storing an encrypted user ID in the cookie would be good to determine the origin of the capability))\\
-((Replay attacks would still be a problem.))\\
+Implementing capabilities using web cookies and SSH keys can be done as follows. The server can encrypt the capability of a user with its private key and then send it to the user as a cookie. When the user makes a request, the cookie is sent to the server (that is, the capability is presented to the server), decrypted with the server's public key, and checked to make sure that the user is authorized to make the request. Because the private SSH key used to create the capabilities is known only to the server and it is computationally intractable for the user to determine the key, only the server can create these encrypted capabilities; malevolent users cannot forge a capability with specific rights.
+
+Another, more scalable way of implementing the capabilities would be to have the cookies represent messages digitally signed by the server. That is, the cookies would be of the form $c + \textit{sig}\big(h(c)\big)$, where $c$ is the capability of the user, \textit{sig} is the signature algorithm used by the server with its private key, and $h$ is a cryptographic hash function. When the server receives a request with a corresponding cookie, the signature is verified with the public key of the server by comparing it with the hash of the message. If the signature is genuine, the capability is accepted and examined. If the capability specifies the right to access the requested object, access is finally granted.
 \item % 5 (b)
 \item \highergradesonly
 \end{enumerate}
