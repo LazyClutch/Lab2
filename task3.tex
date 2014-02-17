@@ -1,5 +1,64 @@
 \section*{Task 3: Intrusion detection}
+In the third task we were required to run Snort as an intrusion detection system (IDS)\cite{snort} in BackBox to read the Snort rules and corresponding alerts.
 \begin{enumerate}
 \item % 3 (a)
+According to the instructions in our document, we ran Snort on a file with previously logged packets: \exploitname{dump.cap}. Then we input a command in the terminal window to open another file. The command is as follows:
+
+\textit{gedit /var/log/snort/alert}
+
+In this file, we could see a list of alerts triggered by corresponding rules. We chose three alerts with different classifications to discuss in detail.
+\begin{itemize}
+\item The first is an alert classified as "\exploitname{Attempted Denial of Service}":
+
+{\bfseries{\textit{[**] [1:100000160:2] COMMUNITY SIP TCP/IP message flooding directed to SIP proxy [**]\\\lstinline{[Classification: Attempted Denial of Service] [Priority: 2]}\\02/14-11:35:16.535556 192.168.1.1:1900 -> 192.168.1.101:62260\\UDP TTL:64 TOS:0x0 ID:0 IpLen:20 DgmLen:288 DF\\Len: 260}}}
+
+The first line illustrates information about the Snort rule which caused this alert. The numbers \exploitname{1::100000160:2} stand for \exploitname{gid:sid:rev} where:
+
+\lstinline{gid(generator ID)-indicates what part of Snort generates the event}\\\lstinline{sid(signature ID)-identifies Snort rules uniquely}\\\lstinline{rev(revision)-the version number of this rule}
+
+Now we can smoothly find the corresponding rule by grepping for the sid number in the directory where Snort rules are stored:
+
+\textit{grep -r sid:100000160 /etc/snort/rules/*}
+
+The particular rule is shown below:
+
+{\bfseries{\textit{/etc/snort/rules/community-sip.rules:alert ip any any -> any 5060\\(msg:"COMMUNITY SIP TCP/IP message flooding directed to SIP proxy";\\threshold: type both, track by\_src, count 300, seconds 60; classtype:attempted-dos; sid:100000160; rev:2;)}}}
+
+The Snort rule consists of several fields, the rule action, the protocol(TCP, UDP, ICMP, IP), the IP address, the port information and the direction operator. The rule action tells Snort what to do when it finds a packet that matches the rule criteria. The direction operator indicates the orientation, or direction, of the traffic that the rule applies to.
+
+In this case, the action is \exploitname{alert}. It can generate an alert using the selected alert method and then log the packet. The protocol is \exploitname{ip}.  The direction operator is  \exploitname{->}, which means the IP address and port numbers on the left side of the direction operator is considered to be the traffic coming from the source host and the address and port information on the right side of the operator is the destination host. In addition, the IP address and port numbers from the source host is \exploitname{any any} and the IP address and port numbers to the destination host is \exploitname{any 5060}. Here, the keyword \exploitname{any} is used to define any address. 
+
+The problem of this rule lies in that it should not use ip for the protocol because SIP runs over TCP or UDP.  
+\item The second is an alert classified as "\exploitname{Potentially Bad Traffic}":
+
+{\bfseries{\textit{[**] [1:527:8] BAD-TRAFFIC same SRC/DST [**]\\\lstinline{[Classification: Potentially Bad Traffic] [Priority: 2]}\\02/14-12:01:28.808604 :: -> ff02::16\\IPV6-ICMP TTL:1 TOS:0x0 ID:256 IpLen:40 DgmLen:76}}}
+
+Now we can smoothly find the corresponding rule by grepping for the sid number:
+
+\textit{grep -r sid:527 /etc/snort/rules/*}
+
+The particular rule is shown below:
+
+{\bfseries{\textit{/etc/snort/rules/bad-traffic.rules:alert ip any any -> any any\\(msg:”BAD-TRAFFIC same SRC/DST”; sameip; reference:bugtraq,2666; \\reference:cve,1999-0016; reference:url,www.cert.org/advisories/CA-1997-28.html;\\classtype:bad-unknown; sid:527; rev:8; )}}}
+
+In this case, the action is \exploitname{alert}. The protocol is \exploitname{ip}.  The direction operator is  \exploitname{->}. In addition, the IP address and port numbers from the source host is \exploitname{any any} and the IP address and port numbers to the destination host is \exploitname{any any}. Here, the keyword \exploitname{any} is used to define any address. 
+
+This rule is intended to detect a Land attack by matching those packets that have the same source and destination IP address. A Land attack is a type of Denial of Service attack that exploits a vulnerability in the logic of the TCP/IP stack of some operating systems that cannot handle packets with the same port and IP address for both source and destination.
+\item The third is an alert classified as "\exploitname{Misc activity}":
+
+{\bfseries{\textit{[**] [1:402:7] ICMP Destination Unreachable Port Unreachable [**]\\\lstinline{[Classification: Misc activity] [Priority: 3]}\\02/14-15:30:49.814222 58.213.161.215 -> 192.168.1.101\\ICMP TTL:44 TOS:0x0 ID:1350 IpLen:20 DgmLen:145\\Type:3  Code:3  DESTINATION UNREACHABLE: PORT UNREACHABLE}}}
+
+Now we can smoothly find the corresponding rule by grepping for the sid number:
+
+\textit{grep -r sid:402 /etc/snort/rules/*}
+
+The particular rule is shown below:
+
+{\bfseries{\textit{/etc/snort/rules/icmp-info.rules:\\alert icmp \$EXTERNAL\_NET any -> \$HOME\_NET any \\(msg:”ICMP Destination Unreachable Port Unreachable”;  icode:3;  itype:3; \\classtype:misc-activity; sid:402; rev:7; )}}}
+
+In this case, the action is \exploitname{alert}. The protocol is \exploitname{icmp}.  The direction operator is  \exploitname{->}. In addition, the IP address and port numbers from the source host is \exploitname{\$EXTERNAL\_NET any} and the IP address and port numbers to the destination host is \exploitname{\$HOME\_NET any}. Here, the keyword \exploitname{any} is used to define any address. 
+
+This event will happen when an ICMP Port Unreachable message was detected. An ICMP Port Unreachable is not an attack, but can indicate that the source of the packet was the target of a scan or other malicious activity.
+\end{itemize}
 \item \highergradesonly
 \end{enumerate}
