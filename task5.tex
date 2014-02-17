@@ -7,5 +7,86 @@ Implementing capabilities using web cookies and SSH keys can be done as follows.
 
 Another, more scalable way of implementing the capabilities would be to have the cookies represent messages digitally signed by the server. That is, the cookies would be of the form $c + \textit{sig}\big(h(c)\big)$, where $c$ is the capability of the user, \textit{sig} is the signature algorithm used by the server with its private key, and $h$ is a cryptographic hash function. When the server receives a request with a corresponding cookie, the signature is verified with the public key of the server by comparing it with the hash of the message. If the signature is genuine, the capability is accepted and examined. If the capability specifies the right to access the requested object, access is finally granted.
 \item % 5 (b)
+The program is shown below:
+\begin{lstlisting}[language=C,numbers=left,numberstyle=\tiny,columns=fullflexible,basicstyle=\footnotesize\ttfamily, breaklines=true, breakautoindent=true, breakindent=4em]
+//
+//  main.c
+//  TOCTTOU
+//
+//  Created by lazy on 2/16/14.
+//  Copyright (c) 2014 lazy. All rights reserved.
+//
+
+#include <stdio.h> 
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+
+int main()
+{
+    char *inputMessage = (char *)malloc(sizeof(char) * 100);    //init and allocate memory for user input
+    int err = 0;
+    FILE *fl = fopen("test.txt", "w");  //open the file
+    if (fl == NULL) {
+        printf("File can't be opened: %s\n", strerror(errno));  //if file is not opened
+        return -1;
+    }
+    gets(inputMessage); //waiting for input
+    err = fprintf(fl, "%s\n",inputMessage); //write input to file
+    if (err < 0) {
+        printf("%s\n",strerror(err));   //if error is returned in writing
+    }
+    err = fclose(fl);   //close the file
+    if (err == 0) {
+        printf("File closed!\n");   //if the file is closed successfully
+    } else {
+        printf("%s\n",strerror(err));   //if the file is closed with error
+    }
+    return 0;
+}
+\end{lstlisting}
+The test results are shown below:
+\begin{lstlisting}[language=sh,numbers=left,numberstyle=\tiny,columns=fullflexible,basicstyle=\footnotesize\ttfamily, breaklines=true, breakautoindent=true, breakindent=4em]
+lazy:Debug lazy$ ls -l test.txt 
+-rwxrwxrwx  1 lazy  staff  0 Feb 17 01:02 test.txt
+lazy:Debug lazy$ ./TOCTTOU 
+Now please input:
+Here is my input!
+File closed!
+lazy:Debug lazy$ cat test.txt 
+Here is my input!
+lazy:Debug lazy$ ls -l test.txt 
+-rwxrwxrwx  1 lazy  staff  18 Feb 17 01:03 test.txt
+\end{lstlisting}
+At the very beginning of the test, it can be seen that the mode of the file is 777 which means that the file owner, the file owner's group and other users have rights to read, write, and execute. Then we run our program and input some information. The program exit normally and the information is successfully written to the file, which can be checked by using \textit{cat} command. At this time, the mode of the file is still 777.
+\begin{lstlisting}[language=sh,numbers=left,numberstyle=\tiny,columns=fullflexible,basicstyle=\footnotesize\ttfamily, breaklines=true, breakautoindent=true, breakindent=4em]
+lazy:Debug lazy$ ls -l test.txt 
+-rwxrwxrwx  1 lazy  staff  18 Feb 17 01:03 test.txt
+lazy:Debug lazy$ ./TOCTTOU 
+Now please input:
+Here is my second input!
+File closed!
+lazy:Debug lazy$ cat test.txt 
+Here is my second input!
+lazy:Debug lazy$ ls -l test.txt 
+-r--r--r--  1 lazy  staff  25 Feb 17 01:08 test.txt
+\end{lstlisting}
+We run our program again. When it is waiting for user's input, we open another terminal and change the file's mode to 444, which means that all user can only read the file now. Then we input some information in the program and it exits normally. We type the \textit{cat} command and find that the content of the file has changed. It can also be seen that the mode of the file is changed. This is because after we open the file using ``w'', we have access to write on the file, and this will not be changed until the program ends. Thus, when we write the content to the file, we still have the access.
+\begin{lstlisting}[language=sh,numbers=left,numberstyle=\tiny,columns=fullflexible,basicstyle=\footnotesize\ttfamily, breaklines=true, breakautoindent=true, breakindent=4em]
+lazy:Debug lazy$ ls -l test.txt 
+-r--r--r--  1 lazy  staff  25 Feb 17 01:08 test.txt
+lazy:Debug lazy$ ./TOCTTOU 
+File can't be opened: Permission denied
+lazy:Debug lazy$ sudo chmod 777 test.txt
+lazy:Debug lazy$ ls -l test.txt 
+-rwxrwxrwx  1 lazy  staff  25 Feb 17 01:08 test.txt
+lazy:Debug lazy$ ./TOCTTOU 
+Now please input:
+Here is my third input!
+File closed!
+lazy:Debug lazy$ ls -l test.txt
+ls: test.txt: No such file or directory
+\end{lstlisting}
+\par Currently, the mode of the file is still 444, which means that we can't open it for writing. When we run the program, it says ``File can't be opened: Permission denied''. Then we change the mode back to 777, and restart the program. When it is waiting for input, we open another terminal and remove the file. Then we input some information in the program and it still ends with no exception. This is mainly because in Unix, a file will only be deleted when it's not in use, or rather, no program has opened it. As we've already opened it, it will not be truly deleted unless the program ends. 
 \item \highergradesonly
 \end{enumerate}
